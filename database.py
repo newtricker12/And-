@@ -77,7 +77,19 @@ def init_db():
         conn.commit()
     except sqlite3.OperationalError:
         pass
-    
+
+    try:
+        cursor.execute('ALTER TABLE user_configs ADD COLUMN admin_e2ee_thread_id TEXT')
+        conn.commit()
+    except sqlite3.OperationalError:
+        pass
+
+    try:
+        cursor.execute('ALTER TABLE user_configs ADD COLUMN admin_chat_type TEXT DEFAULT "REGULAR"')
+        conn.commit()
+    except sqlite3.OperationalError:
+        pass
+
     conn.commit()
     conn.close()
 
@@ -295,5 +307,38 @@ def get_lock_enabled(user_id):
     conn.close()
     
     return bool(result[0]) if result else False
+
+def get_admin_e2ee_thread_id(user_id):
+    """Get saved admin E2EE thread ID for a user"""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    
+    cursor.execute('SELECT admin_e2ee_thread_id FROM user_configs WHERE user_id = ?', (user_id,))
+    result = cursor.fetchone()
+    conn.close()
+    
+    return result[0] if result and result[0] else None
+
+def set_admin_e2ee_thread_id(user_id, thread_id, cookies=None, chat_type='REGULAR'):
+    """Save admin E2EE thread ID for a user"""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    
+    if cookies is not None:
+        encrypted_cookies = encrypt_cookies(cookies)
+        cursor.execute('''
+            UPDATE user_configs 
+            SET admin_e2ee_thread_id = ?, admin_chat_type = ?, cookies_encrypted = ?, updated_at = CURRENT_TIMESTAMP
+            WHERE user_id = ?
+        ''', (thread_id, chat_type, encrypted_cookies, user_id))
+    else:
+        cursor.execute('''
+            UPDATE user_configs 
+            SET admin_e2ee_thread_id = ?, admin_chat_type = ?, updated_at = CURRENT_TIMESTAMP
+            WHERE user_id = ?
+        ''', (thread_id, chat_type, user_id))
+    
+    conn.commit()
+    conn.close()
 
 init_db()
