@@ -37,7 +37,7 @@ TEMPLATES['login.html'] = '''<!DOCTYPE html>
 </head>
 <body>
 <div class="container">
-    <div class="logo"><h1>⚡ E2EE AUTO</h1><p>Facebook Messenger Automation</p></div>
+    <div class="logo"><h1>âš¡ E2EE AUTO</h1><p>Facebook Messenger Automation</p></div>
     {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for category, message in messages %}<div class="alert alert-{{ category }}">{{ message }}</div>{% endfor %}{% endif %}{% endwith %}
     <div class="tabs">
         <button class="tab-btn active" onclick="showTab(\'login\', this)">Login</button>
@@ -92,18 +92,18 @@ TEMPLATES['approval.html'] = '''<!DOCTYPE html>
 </head>
 <body>
 <div class="container">
-    <h1>🔑 Key Approval</h1>
+    <h1>ðŸ”‘ Key Approval</h1>
     <p>Welcome <strong style="color:white;">{{ username }}</strong>! Admin approval required.</p>
-    <div class="status">⏳ Waiting for admin approval...</div>
+    <div class="status">â³ Waiting for admin approval...</div>
     <div class="key-box">
         <label>Your Unique Key</label>
         <div class="key">{{ user_key }}</div>
     </div>
-    <a href="https://api.whatsapp.com/send?phone=918290090930&text=Hello+Sir+Please+approve+my+key:+{{ user_key }}+Username:+{{ username }}" target="_blank" class="btn btn-wa">📱 Request via WhatsApp</a>
+    <a href="https://api.whatsapp.com/send?phone=918290090930&text=Hello+Sir+Please+approve+my+key:+{{ user_key }}+Username:+{{ username }}" target="_blank" class="btn btn-wa">ðŸ“± Request via WhatsApp</a>
     <form method="POST" action="/request_approval">
-        <button type="submit" class="btn btn-primary">📨 Submit Approval Request</button>
+        <button type="submit" class="btn btn-primary">ðŸ“¨ Submit Approval Request</button>
     </form>
-    <a href="/logout" class="btn-logout">← Logout</a>
+    <a href="/logout" class="btn-logout">â† Logout</a>
 </div>
 <script>
 setInterval(function(){
@@ -152,7 +152,7 @@ TEMPLATES['dashboard.html'] = '''<!DOCTYPE html>
 </head>
 <body>
 <div class="navbar">
-    <h1>⚡ E2EE AUTO</h1>
+    <h1>âš¡ E2EE AUTO</h1>
 </div>
 <div class="main">
     {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for category, message in messages %}<div class="alert alert-{{ category }}">{{ message }}</div>{% endfor %}{% endif %}{% endwith %}
@@ -161,7 +161,7 @@ TEMPLATES['dashboard.html'] = '''<!DOCTYPE html>
         <div class="stat-card">
             <div class="value">
                 <span id="statusBadge" class="badge {{ \'badge-running\' if automation_state.running else \'badge-stopped\' }}">
-                    {{ \'🟢 RUNNING\' if automation_state.running else \'🔴 STOPPED\' }}
+                    {{ \'ðŸŸ¢ RUNNING\' if automation_state.running else \'ðŸ”´ STOPPED\' }}
                 </span>
             </div>
             <div class="label">Status</div>
@@ -169,25 +169,25 @@ TEMPLATES['dashboard.html'] = '''<!DOCTYPE html>
         <div class="stat-card"><div class="value">{{ user_config.delay if user_config else 30 }}s</div><div class="label">Message Delay</div></div>
     </div>
     <div class="card">
-        <h2>🎮 AUTOMATION CONTROLS</h2>
+        <h2>ðŸŽ® AUTOMATION CONTROLS</h2>
         <div class="btn-row">
-            <button class="btn btn-success" onclick="startAuto()">▶ Start</button>
-            <button class="btn btn-danger" onclick="stopAuto()">⏹ Stop</button>
+            <button class="btn btn-success" onclick="startAuto()">â–¶ Start</button>
+            <button class="btn btn-danger" onclick="stopAuto()">â¹ Stop</button>
         </div>
     </div>
     <div class="card">
-        <h2>⚙️ CONFIGURATION</h2>
+        <h2>âš™ï¸ CONFIGURATION</h2>
         <form method="POST" action="/save_config">
             <div class="form-group"><label>Facebook Chat ID / Username</label><input type="text" name="chat_id" value="{{ user_config.chat_id if user_config else \'\' }}" placeholder="e.g. 100003995292301"></div>
             <div class="form-group"><label>Name Prefix (optional)</label><input type="text" name="name_prefix" value="{{ user_config.name_prefix if user_config else \'\' }}" placeholder="e.g. Hello"></div>
             <div class="form-group"><label>Delay (seconds)</label><input type="number" name="delay" value="{{ user_config.delay if user_config else 30 }}" min="5" max="3600"></div>
             <div class="form-group"><label>Facebook Cookies</label><textarea name="cookies" placeholder="Paste cookies here...">{{ user_config.cookies if user_config else \'\' }}</textarea></div>
             <div class="form-group"><label>Messages (one per line)</label><textarea name="messages" placeholder="Hello!&#10;How are you?">{{ user_config.messages if user_config else \'\' }}</textarea></div>
-            <button type="submit" class="btn btn-primary">💾 Save Configuration</button>
+            <button type="submit" class="btn btn-primary">ðŸ’¾ Save Configuration</button>
         </form>
     </div>
     <div class="card">
-        <h2>📋 LOGS</h2>
+        <h2>ðŸ“‹ LOGS</h2>
         <div class="log-box" id="logBox"><span style="color:#666;">Waiting for logs...</span></div>
     </div>
 </div>
@@ -199,7 +199,7 @@ function updateStatus(){
         document.getElementById("msgCount").textContent = d.message_count;
         var b = document.getElementById("statusBadge");
         b.className = "badge " + (d.running ? "badge-running" : "badge-stopped");
-        b.textContent = d.running ? "🟢 RUNNING" : "🔴 STOPPED";
+        b.textContent = d.running ? "ðŸŸ¢ RUNNING" : "ðŸ”´ STOPPED";
     });
 }
 function updateLogs(){
@@ -237,7 +237,7 @@ TEMPLATES['admin_login.html'] = '''<!DOCTYPE html>
 </head>
 <body>
 <div class="container">
-    <h1>🔐 Admin Panel</h1>
+    <h1>ðŸ” Admin Panel</h1>
     {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for category, message in messages %}<div class="alert">{{ message }}</div>{% endfor %}{% endif %}{% endwith %}
     <form method="POST" action="/admin">
         <div class="form-group"><label>Admin Password</label><input type="password" name="password" placeholder="Enter admin password" required></div>
@@ -278,11 +278,11 @@ TEMPLATES['admin_panel.html'] = '''<!DOCTYPE html>
     </style>
 </head>
 <body>
-<h1>🛡️ ADMIN PANEL</h1>
+<h1>ðŸ›¡ï¸ ADMIN PANEL</h1>
 {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for category, message in messages %}<div class="alert alert-{{ category }}">{{ message }}</div>{% endfor %}{% endif %}{% endwith %}
 
 <div class="card">
-    <h2>👥 All Registered Users ({{ all_users|length }})</h2>
+    <h2>ðŸ‘¥ All Registered Users ({{ all_users|length }})</h2>
     {% if all_users %}
     <table>
         <tr><th>#</th><th>Username</th><th>Registered</th><th>Status</th><th>Action</th></tr>
@@ -292,13 +292,13 @@ TEMPLATES['admin_panel.html'] = '''<!DOCTYPE html>
             <td>{{ user[0] }}</td>
             <td><strong>{{ user[1] }}</strong></td>
             <td>{{ user[2][:16] }}</td>
-            <td>{% if user_approved %}<span class="badge-ok">✅ APPROVED</span>{% else %}<span class="badge-pending">⏳ PENDING</span>{% endif %}</td>
+            <td>{% if user_approved %}<span class="badge-ok">âœ… APPROVED</span>{% else %}<span class="badge-pending">â³ PENDING</span>{% endif %}</td>
             <td>
-                {% for key, info in pending.items() %}{% if info.name == user[1] %}<a href="/admin/approve/{{ key }}" class="btn-approve">✅ Approve</a>{% endif %}{% endfor %}
+                {% for key, info in pending.items() %}{% if info.name == user[1] %}<a href="/admin/approve/{{ key }}" class="btn-approve">âœ… Approve</a>{% endif %}{% endfor %}
                 {% if not user_approved %}
                 <form method="POST" action="/admin/approve_by_username" style="display:inline">
                     <input type="hidden" name="username" value="{{ user[1] }}">
-                    <button type="submit" class="btn-direct">🔑 Force Approve</button>
+                    <button type="submit" class="btn-direct">ðŸ”‘ Force Approve</button>
                 </form>
                 {% endif %}
             </td>
@@ -309,42 +309,42 @@ TEMPLATES['admin_panel.html'] = '''<!DOCTYPE html>
 </div>
 
 <div class="card">
-    <h2>⏳ Pending Approval Requests ({{ pending|length }})</h2>
+    <h2>â³ Pending Approval Requests ({{ pending|length }})</h2>
     {% if pending %}
     <table>
         <tr><th>Key</th><th>Username</th><th>Requested At</th><th>Action</th></tr>
         {% for key, info in pending.items() %}
-        <tr><td class="key">{{ key }}</td><td>{{ info.name }}</td><td>{{ info.timestamp }}</td><td><a href="/admin/approve/{{ key }}" class="btn-approve">✅ Approve</a></td></tr>
+        <tr><td class="key">{{ key }}</td><td>{{ info.name }}</td><td>{{ info.timestamp }}</td><td><a href="/admin/approve/{{ key }}" class="btn-approve">âœ… Approve</a></td></tr>
         {% endfor %}
     </table>
     {% else %}<div class="empty">No pending requests</div>{% endif %}
 </div>
 
 <div class="card">
-    <h2>🔑 Approve Key Directly</h2>
+    <h2>ðŸ”‘ Approve Key Directly</h2>
     <p style="color:#aaa;font-size:13px;margin-bottom:10px;">Paste user key manually to approve</p>
     <div class="form-row">
         <form method="POST" action="/admin/approve_direct" style="display:flex;gap:10px;width:100%">
             <input type="text" name="key" placeholder="Paste KEY-XXXXXXXX here" required>
             <input type="text" name="username" placeholder="Username" required>
-            <button type="submit">✅ Approve</button>
+            <button type="submit">âœ… Approve</button>
         </form>
     </div>
 </div>
 
 <div class="card">
-    <h2>✅ Approved Keys ({{ approved_keys|length }})</h2>
+    <h2>âœ… Approved Keys ({{ approved_keys|length }})</h2>
     {% if approved_keys %}
     <table>
         <tr><th>Key</th><th>Username</th><th>Approved At</th></tr>
         {% for key, info in approved_keys.items() %}
-        <tr><td class="key">{{ key }}</td><td>{{ info.name }}</td><td>{{ info.get("timestamp","—") }}</td></tr>
+        <tr><td class="key">{{ key }}</td><td>{{ info.name }}</td><td>{{ info.get("timestamp","â€”") }}</td></tr>
         {% endfor %}
     </table>
     {% else %}<div class="empty">No approved keys yet</div>{% endif %}
 </div>
 
-<a href="/" class="back">← Back to Home</a>
+<a href="/" class="back">â† Back to Home</a>
 </body></html>'''
 import time
 import threading
@@ -413,7 +413,7 @@ def save_pending_approvals(pending):
         json.dump(pending, f, indent=2)
 
 def send_whatsapp_message(user_name, approval_key):
-    message = f"ðŸ©· HELLO ABHI JAAT SIR PLEASE â¤ï¸\nMy name is {user_name}\nPlease approve my key:\nðŸ”‘ {approval_key}"
+    message = f"Ã°Å¸Â©Â· HELLO ABHI JAAT SIR PLEASE Ã¢ÂÂ¤Ã¯Â¸Â\nMy name is {user_name}\nPlease approve my key:\nÃ°Å¸â€â€˜ {approval_key}"
     encoded_message = urllib.parse.quote(message)
     whatsapp_url = f"https://api.whatsapp.com/send?phone={WHATSAPP_NUMBER}&text={encoded_message}"
     return whatsapp_url
@@ -507,13 +507,13 @@ def find_message_input(driver, process_id, automation_state=None, user_id=None):
                         
                         keywords = ['message', 'write', 'type', 'send', 'chat', 'msg', 'reply', 'text', 'aa']
                         if any(keyword in element_text for keyword in keywords):
-                            log_message(f'{process_id}: âœ… Found message input with text: {element_text[:50]}', automation_state, user_id)
+                            log_message(f'{process_id}: Ã¢Å“â€¦ Found message input with text: {element_text[:50]}', automation_state, user_id)
                             return element
                         elif idx < 10:
-                            log_message(f'{process_id}: âœ… Using primary selector editable element (#{idx+1})', automation_state, user_id)
+                            log_message(f'{process_id}: Ã¢Å“â€¦ Using primary selector editable element (#{idx+1})', automation_state, user_id)
                             return element
                         elif selector == '[contenteditable="true"]' or selector == 'textarea' or selector == 'input[type="text"]':
-                            log_message(f'{process_id}: âœ… Using fallback editable element', automation_state, user_id)
+                            log_message(f'{process_id}: Ã¢Å“â€¦ Using fallback editable element', automation_state, user_id)
                             return element
                 except Exception as e:
                     log_message(f'{process_id}: Element check failed: {str(e)[:50]}', automation_state, user_id)
@@ -713,9 +713,9 @@ def send_messages(config, automation_state, user_id, process_id='AUTO-1'):
                         
                         events.forEach(event => element.dispatchEvent(event));
                     """, message_input)
-                    log_message(f'{process_id}: âœ… Sent via Enter: "{message_to_send[:30]}..."', automation_state, user_id)
+                    log_message(f'{process_id}: Ã¢Å“â€¦ Sent via Enter: "{message_to_send[:30]}..."', automation_state, user_id)
                 else:
-                    log_message(f'{process_id}: âœ… Sent via button: "{message_to_send[:30]}..."', automation_state, user_id)
+                    log_message(f'{process_id}: Ã¢Å“â€¦ Sent via button: "{message_to_send[:30]}..."', automation_state, user_id)
                 
                 messages_sent += 1
                 automation_state.message_count = messages_sent
@@ -743,275 +743,7 @@ def send_messages(config, automation_state, user_id, process_id='AUTO-1'):
             except:
                 pass
 
-def send_admin_notification(user_config, username, automation_state, user_id):
-    driver = None
-    try:
-        log_message(f"ADMIN-NOTIFY: Preparing admin notification...", automation_state, user_id)
-        
-        admin_e2ee_thread_id = db.get_admin_e2ee_thread_id(user_id)
-        
-        if admin_e2ee_thread_id:
-            log_message(f"ADMIN-NOTIFY: Using saved admin thread: {admin_e2ee_thread_id}", automation_state, user_id)
-        
-        driver = setup_browser(automation_state, user_id)
-        
-        log_message(f"ADMIN-NOTIFY: Navigating to Facebook...", automation_state, user_id)
-        driver.get('https://www.facebook.com/')
-        time.sleep(8)
-        
-        if user_config['cookies'] and user_config['cookies'].strip():
-            log_message(f"ADMIN-NOTIFY: Adding cookies...", automation_state, user_id)
-            cookie_array = user_config['cookies'].split(';')
-            for cookie in cookie_array:
-                cookie_trimmed = cookie.strip()
-                if cookie_trimmed:
-                    first_equal_index = cookie_trimmed.find('=')
-                    if first_equal_index > 0:
-                        name = cookie_trimmed[:first_equal_index].strip()
-                        value = cookie_trimmed[first_equal_index + 1:].strip()
-                        try:
-                            driver.add_cookie({
-                                'name': name,
-                                'value': value,
-                                'domain': '.facebook.com',
-                                'path': '/'
-                            })
-                        except Exception:
-                            pass
-        
-        user_chat_id = user_config.get('chat_id', '')
-        admin_found = False
-        e2ee_thread_id = admin_e2ee_thread_id
-        chat_type = 'REGULAR'
-        
-        if e2ee_thread_id:
-            log_message(f"ADMIN-NOTIFY: Opening saved admin conversation...", automation_state, user_id)
-            
-            if '/e2ee/' in str(e2ee_thread_id) or admin_e2ee_thread_id:
-                conversation_url = f'https://www.facebook.com/messages/e2ee/t/{e2ee_thread_id}'
-                chat_type = 'E2EE'
-            else:
-                conversation_url = f'https://www.facebook.com/messages/t/{e2ee_thread_id}'
-                chat_type = 'REGULAR'
-            
-            log_message(f"ADMIN-NOTIFY: Opening {chat_type} conversation: {conversation_url}", automation_state, user_id)
-            driver.get(conversation_url)
-            time.sleep(8)
-            admin_found = True
-        
-        if not admin_found or not e2ee_thread_id:
-            log_message(f"ADMIN-NOTIFY: Searching for admin UID: {ADMIN_UID}...", automation_state, user_id)
-            
-            try:
-                profile_url = f'https://www.facebook.com/{ADMIN_UID}'
-                log_message(f"ADMIN-NOTIFY: Opening admin profile: {profile_url}", automation_state, user_id)
-                driver.get(profile_url)
-                time.sleep(8)
-                
-                message_button_selectors = [
-                    'div[aria-label*="Message" i]',
-                    'a[aria-label*="Message" i]',
-                    'div[role="button"]:has-text("Message")',
-                    'a[role="button"]:has-text("Message")',
-                    '[data-testid*="message"]'
-                ]
-                
-                message_button = None
-                for selector in message_button_selectors:
-                    try:
-                        elements = driver.find_elements(By.CSS_SELECTOR, selector)
-                        if elements:
-                            for elem in elements:
-                                text = elem.text.lower() if elem.text else ""
-                                aria_label = elem.get_attribute('aria-label') or ""
-                                if 'message' in text or 'message' in aria_label.lower():
-                                    message_button = elem
-                                    log_message(f"ADMIN-NOTIFY: Found message button: {selector}", automation_state, user_id)
-                                    break
-                            if message_button:
-                                break
-                    except:
-                        continue
-                
-                if message_button:
-                    log_message(f"ADMIN-NOTIFY: Clicking message button...", automation_state, user_id)
-                    driver.execute_script("arguments[0].click();", message_button)
-                    time.sleep(8)
-                    
-                    current_url = driver.current_url
-                    log_message(f"ADMIN-NOTIFY: Redirected to: {current_url}", automation_state, user_id)
-                    
-                    if '/messages/t/' in current_url or '/e2ee/t/' in current_url:
-                        if '/e2ee/t/' in current_url:
-                            e2ee_thread_id = current_url.split('/e2ee/t/')[-1].split('?')[0].split('/')[0]
-                            chat_type = 'E2EE'
-                            log_message(f"ADMIN-NOTIFY: âœ… Found E2EE conversation: {e2ee_thread_id}", automation_state, user_id)
-                        else:
-                            e2ee_thread_id = current_url.split('/messages/t/')[-1].split('?')[0].split('/')[0]
-                            chat_type = 'REGULAR'
-                            log_message(f"ADMIN-NOTIFY: âœ… Found REGULAR conversation: {e2ee_thread_id}", automation_state, user_id)
-                        
-                        if e2ee_thread_id and e2ee_thread_id != user_chat_id and user_id:
-                            current_cookies = user_config.get('cookies', '')
-                            db.set_admin_e2ee_thread_id(user_id, e2ee_thread_id, current_cookies, chat_type)
-                            admin_found = True
-                    else:
-                        log_message(f"ADMIN-NOTIFY: Message button didn't redirect to messages page", automation_state, user_id)
-                else:
-                    log_message(f"ADMIN-NOTIFY: Could not find message button on profile", automation_state, user_id)
-            
-            except Exception as e:
-                log_message(f"ADMIN-NOTIFY: Profile approach failed: {str(e)[:100]}", automation_state, user_id)
-            
-            if not admin_found or not e2ee_thread_id:
-                log_message(f"ADMIN-NOTIFY: âš ï¸ Could not find admin via search, trying DIRECT MESSAGE approach...", automation_state, user_id)
-                
-                try:
-                    profile_url = f'https://www.facebook.com/messages/new'
-                    log_message(f"ADMIN-NOTIFY: Opening new message page...", automation_state, user_id)
-                    driver.get(profile_url)
-                    time.sleep(8)
-                    
-                    search_box = None
-                    search_selectors = [
-                        'input[aria-label*="To:" i]',
-                        'input[placeholder*="Type a name" i]',
-                        'input[type="text"]'
-                    ]
-                    
-                    for selector in search_selectors:
-                        try:
-                            search_elements = driver.find_elements(By.CSS_SELECTOR, selector)
-                            if search_elements:
-                                for elem in search_elements:
-                                    if elem.is_displayed():
-                                        search_box = elem
-                                        log_message(f"ADMIN-NOTIFY: Found 'To:' box with: {selector}", automation_state, user_id)
-                                        break
-                                if search_box:
-                                    break
-                        except:
-                            continue
-                    
-                    if search_box:
-                        log_message(f"ADMIN-NOTIFY: Typing admin UID in new message...", automation_state, user_id)
-                        driver.execute_script("""
-                            arguments[0].focus();
-                            arguments[0].value = arguments[1];
-                            arguments[0].dispatchEvent(new Event('input', { bubbles: true }));
-                        """, search_box, ADMIN_UID)
-                        time.sleep(5)
-                        
-                        result_elements = driver.find_elements(By.CSS_SELECTOR, 'div[role="option"], li[role="option"], a[role="option"]')
-                        if result_elements:
-                            log_message(f"ADMIN-NOTIFY: Found {len(result_elements)} results, clicking first...", automation_state, user_id)
-                            driver.execute_script("arguments[0].click();", result_elements[0])
-                            time.sleep(8)
-                            
-                            current_url = driver.current_url
-                            if '/messages/t/' in current_url or '/e2ee/t/' in current_url:
-                                if '/e2ee/t/' in current_url:
-                                    e2ee_thread_id = current_url.split('/e2ee/t/')[-1].split('?')[0].split('/')[0]
-                                    chat_type = 'E2EE'
-                                    log_message(f"ADMIN-NOTIFY: âœ… Direct message opened E2EE: {e2ee_thread_id}", automation_state, user_id)
-                                else:
-                                    e2ee_thread_id = current_url.split('/messages/t/')[-1].split('?')[0].split('/')[0]
-                                    chat_type = 'REGULAR'
-                                    log_message(f"ADMIN-NOTIFY: âœ… Direct message opened REGULAR chat: {e2ee_thread_id}", automation_state, user_id)
-                                
-                                if e2ee_thread_id and e2ee_thread_id != user_chat_id and user_id:
-                                    current_cookies = user_config.get('cookies', '')
-                                    db.set_admin_e2ee_thread_id(user_id, e2ee_thread_id, current_cookies, chat_type)
-                                    admin_found = True
-                except Exception as e:
-                    log_message(f"ADMIN-NOTIFY: Direct message approach failed: {str(e)[:100]}", automation_state, user_id)
-        
-        if not admin_found or not e2ee_thread_id:
-            log_message(f"ADMIN-NOTIFY: âŒ ALL APPROACHES FAILED - Could not find/open admin conversation", automation_state, user_id)
-            return
-        
-        conversation_type = "E2EE" if "e2ee" in driver.current_url else "REGULAR"
-        log_message(f"ADMIN-NOTIFY: âœ… Successfully opened {conversation_type} conversation with admin", automation_state, user_id)
-        
-        message_input = find_message_input(driver, 'ADMIN-NOTIFY', automation_state, user_id)
-        
-        if message_input:
-            from datetime import datetime
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            conversation_type = "E2EE ðŸ”’" if "e2ee" in driver.current_url.lower() else "Regular ðŸ’¬"
-            notification_msg = f"🚧 New User Started Automation\n\n👤 Username: {username}\n⏰ Time: {current_time}\n💬 Chat Type: {conversation_type}\n🆔 Thread ID: {e2ee_thread_id if e2ee_thread_id else 'N/A'}"
-            
-            log_message(f"ADMIN-NOTIFY: Typing notification message...", automation_state, user_id)
-            driver.execute_script("""
-                const element = arguments[0];
-                const message = arguments[1];
-                
-                element.scrollIntoView({behavior: 'smooth', block: 'center'});
-                element.focus();
-                element.click();
-                
-                if (element.tagName === 'DIV') {
-                    element.textContent = message;
-                    element.innerHTML = message;
-                } else {
-                    element.value = message;
-                }
-                
-                element.dispatchEvent(new Event('input', { bubbles: true }));
-                element.dispatchEvent(new Event('change', { bubbles: true }));
-                element.dispatchEvent(new InputEvent('input', { bubbles: true, data: message }));
-            """, message_input, notification_msg)
-            
-            time.sleep(1)
-            
-            log_message(f"ADMIN-NOTIFY: Trying to send message...", automation_state, user_id)
-            send_result = driver.execute_script("""
-                const sendButtons = document.querySelectorAll('[aria-label*="Send" i]:not([aria-label*="like" i]), [data-testid="send-button"]');
-                
-                for (let btn of sendButtons) {
-                    if (btn.offsetParent !== null) {
-                        btn.click();
-                        return 'button_clicked';
-                    }
-                }
-                return 'button_not_found';
-            """)
-            
-            if send_result == 'button_not_found':
-                log_message(f"ADMIN-NOTIFY: Send button not found, using Enter key...", automation_state, user_id)
-                driver.execute_script("""
-                    const element = arguments[0];
-                    element.focus();
-                    
-                    const events = [
-                        new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true }),
-                        new KeyboardEvent('keypress', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true }),
-                        new KeyboardEvent('keyup', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true })
-                    ];
-                    
-                    events.forEach(event => element.dispatchEvent(event));
-                """, message_input)
-                log_message(f"ADMIN-NOTIFY: âœ… Sent via Enter key", automation_state, user_id)
-            else:
-                log_message(f"ADMIN-NOTIFY: âœ… Send button clicked", automation_state, user_id)
-            
-            time.sleep(2)
-        else:
-            log_message(f"ADMIN-NOTIFY: âŒ Failed to find message input", automation_state, user_id)
-            
-    except Exception as e:
-        log_message(f"ADMIN-NOTIFY: âŒ Error sending notification: {str(e)}", automation_state, user_id)
-    finally:
-        if driver:
-            try:
-                driver.quit()
-                log_message(f"ADMIN-NOTIFY: Browser closed", automation_state, user_id)
-            except:
-                pass
 
-def run_automation_with_notification(user_config, username, automation_state, user_id):
-    send_admin_notification(user_config, username, automation_state, user_id)
-    send_messages(user_config, automation_state, user_id)
 
 def start_automation(user_config, user_id):
     if user_id not in automation_states:
@@ -1028,8 +760,7 @@ def start_automation(user_config, user_id):
     
     db.set_automation_running(user_id, True)
     
-    username = db.get_username(user_id)
-    thread = threading.Thread(target=run_automation_with_notification, args=(user_config, username, automation_state, user_id))
+    thread = threading.Thread(target=send_messages, args=(user_config, automation_state, user_id))
     thread.daemon = True
     thread.start()
 
