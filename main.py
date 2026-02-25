@@ -122,11 +122,6 @@ TEMPLATES['dashboard.html'] = '''<!DOCTYPE html>
         body { font-family:"Segoe UI",sans-serif; background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460); min-height:100vh; color:white; }
         .navbar { background:rgba(0,0,0,0.3); padding:15px 30px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); }
         .navbar h1 { color:#e94560; font-size:20px; letter-spacing:2px; }
-        .navbar .right { display:flex; align-items:center; gap:12px; }
-        .navbar .username { color:#ccc; font-size:14px; }
-        .key-badge { font-family:monospace; color:#e94560; background:rgba(233,69,96,0.1); padding:4px 10px; border-radius:6px; font-size:13px; }
-        .navbar a { color:#aaa; text-decoration:none; font-size:13px; padding:8px 15px; border:1px solid rgba(255,255,255,0.15); border-radius:8px; }
-        .navbar a:hover { background:rgba(233,69,96,0.2); border-color:#e94560; color:white; }
         .main { padding:30px; max-width:1000px; margin:0 auto; }
         .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px; margin-bottom:30px; }
         .stat-card { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:15px; padding:20px; text-align:center; }
@@ -158,11 +153,6 @@ TEMPLATES['dashboard.html'] = '''<!DOCTYPE html>
 <body>
 <div class="navbar">
     <h1>⚡ E2EE AUTO</h1>
-    <div class="right">
-        <span class="username">👤 {{ username }}</span>
-        <span class="key-badge">{{ user_key }}</span>
-        <a href="/logout">Logout</a>
-    </div>
 </div>
 <div class="main">
     {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for category, message in messages %}<div class="alert alert-{{ category }}">{{ message }}</div>{% endfor %}{% endif %}{% endwith %}
@@ -266,21 +256,60 @@ TEMPLATES['admin_panel.html'] = '''<!DOCTYPE html>
         body { font-family:"Segoe UI",sans-serif; background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460); min-height:100vh; color:white; padding:30px; }
         h1 { color:#e94560; font-size:24px; margin-bottom:25px; }
         h2 { color:#ccc; font-size:16px; margin-bottom:15px; }
-        .card { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:15px; padding:25px; margin-bottom:25px; max-width:800px; }
+        .card { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:15px; padding:25px; margin-bottom:25px; max-width:900px; }
         table { width:100%; border-collapse:collapse; }
-        th { text-align:left; padding:12px 15px; color:#aaa; font-size:12px; text-transform:uppercase; border-bottom:1px solid rgba(255,255,255,0.1); }
-        td { padding:12px 15px; font-size:13px; border-bottom:1px solid rgba(255,255,255,0.05); color:#ddd; }
-        .key { font-family:monospace; color:#e94560; font-weight:700; }
-        .btn-approve { padding:7px 16px; background:linear-gradient(135deg,#4caf50,#388e3c); border:none; border-radius:7px; color:white; font-size:12px; font-weight:700; cursor:pointer; text-decoration:none; display:inline-block; }
+        th { text-align:left; padding:10px 12px; color:#aaa; font-size:12px; text-transform:uppercase; border-bottom:1px solid rgba(255,255,255,0.1); }
+        td { padding:10px 12px; font-size:13px; border-bottom:1px solid rgba(255,255,255,0.05); color:#ddd; }
+        .key { font-family:monospace; color:#e94560; font-weight:700; font-size:12px; }
+        .btn-approve { padding:6px 14px; background:linear-gradient(135deg,#4caf50,#388e3c); border:none; border-radius:7px; color:white; font-size:12px; font-weight:700; cursor:pointer; text-decoration:none; display:inline-block; }
+        .btn-direct { padding:6px 14px; background:linear-gradient(135deg,#2196f3,#1565c0); border:none; border-radius:7px; color:white; font-size:12px; font-weight:700; cursor:pointer; text-decoration:none; display:inline-block; }
         .empty { color:#666; font-size:14px; text-align:center; padding:20px; }
         .badge-ok { display:inline-block; padding:4px 10px; background:rgba(76,175,80,0.2); color:#81c784; border-radius:12px; font-size:11px; font-weight:700; }
+        .badge-pending { display:inline-block; padding:4px 10px; background:rgba(255,152,0,0.2); color:#ffcc80; border-radius:12px; font-size:11px; font-weight:700; }
         a.back { display:inline-block; margin-top:10px; color:#aaa; text-decoration:none; font-size:13px; }
+        .form-row { display:flex; gap:10px; margin-top:10px; }
+        .form-row input { flex:1; padding:10px 14px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:8px; color:white; font-size:13px; outline:none; }
+        .form-row button { padding:10px 20px; background:linear-gradient(135deg,#e94560,#c23152); border:none; border-radius:8px; color:white; font-size:13px; font-weight:700; cursor:pointer; }
+        .alert { padding:10px 15px; border-radius:8px; margin-bottom:15px; font-size:13px; }
+        .alert-success { background:rgba(76,175,80,0.2); color:#81c784; }
+        .alert-error { background:rgba(233,69,96,0.2); color:#ef9a9a; }
+        .alert-warning { background:rgba(255,152,0,0.2); color:#ffcc80; }
+        .alert-info { background:rgba(33,150,243,0.2); color:#90caf9; }
     </style>
 </head>
 <body>
 <h1>🛡️ ADMIN PANEL</h1>
+{% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for category, message in messages %}<div class="alert alert-{{ category }}">{{ message }}</div>{% endfor %}{% endif %}{% endwith %}
+
 <div class="card">
-    <h2>⏳ Pending Approvals ({{ pending|length }})</h2>
+    <h2>👥 All Registered Users ({{ all_users|length }})</h2>
+    {% if all_users %}
+    <table>
+        <tr><th>#</th><th>Username</th><th>Registered</th><th>Status</th><th>Action</th></tr>
+        {% for user in all_users %}
+        {% set user_approved = approved_keys.values()|selectattr("name","equalto",user[1])|list|length > 0 %}
+        <tr>
+            <td>{{ user[0] }}</td>
+            <td><strong>{{ user[1] }}</strong></td>
+            <td>{{ user[2][:16] }}</td>
+            <td>{% if user_approved %}<span class="badge-ok">✅ APPROVED</span>{% else %}<span class="badge-pending">⏳ PENDING</span>{% endif %}</td>
+            <td>
+                {% for key, info in pending.items() %}{% if info.name == user[1] %}<a href="/admin/approve/{{ key }}" class="btn-approve">✅ Approve</a>{% endif %}{% endfor %}
+                {% if not user_approved %}
+                <form method="POST" action="/admin/approve_by_username" style="display:inline">
+                    <input type="hidden" name="username" value="{{ user[1] }}">
+                    <button type="submit" class="btn-direct">🔑 Force Approve</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}<div class="empty">No users registered yet</div>{% endif %}
+</div>
+
+<div class="card">
+    <h2>⏳ Pending Approval Requests ({{ pending|length }})</h2>
     {% if pending %}
     <table>
         <tr><th>Key</th><th>Username</th><th>Requested At</th><th>Action</th></tr>
@@ -288,19 +317,33 @@ TEMPLATES['admin_panel.html'] = '''<!DOCTYPE html>
         <tr><td class="key">{{ key }}</td><td>{{ info.name }}</td><td>{{ info.timestamp }}</td><td><a href="/admin/approve/{{ key }}" class="btn-approve">✅ Approve</a></td></tr>
         {% endfor %}
     </table>
-    {% else %}<div class="empty">No pending approvals</div>{% endif %}
+    {% else %}<div class="empty">No pending requests</div>{% endif %}
 </div>
+
+<div class="card">
+    <h2>🔑 Approve Key Directly</h2>
+    <p style="color:#aaa;font-size:13px;margin-bottom:10px;">Paste user key manually to approve</p>
+    <div class="form-row">
+        <form method="POST" action="/admin/approve_direct" style="display:flex;gap:10px;width:100%">
+            <input type="text" name="key" placeholder="Paste KEY-XXXXXXXX here" required>
+            <input type="text" name="username" placeholder="Username" required>
+            <button type="submit">✅ Approve</button>
+        </form>
+    </div>
+</div>
+
 <div class="card">
     <h2>✅ Approved Keys ({{ approved_keys|length }})</h2>
     {% if approved_keys %}
     <table>
-        <tr><th>Key</th><th>Username</th><th>Status</th></tr>
+        <tr><th>Key</th><th>Username</th><th>Approved At</th></tr>
         {% for key, info in approved_keys.items() %}
-        <tr><td class="key">{{ key }}</td><td>{{ info.name }}</td><td><span class="badge-ok">APPROVED</span></td></tr>
+        <tr><td class="key">{{ key }}</td><td>{{ info.name }}</td><td>{{ info.get("timestamp","—") }}</td></tr>
         {% endfor %}
     </table>
     {% else %}<div class="empty">No approved keys yet</div>{% endif %}
 </div>
+
 <a href="/" class="back">← Back to Home</a>
 </body></html>'''
 import time
@@ -376,8 +419,21 @@ def send_whatsapp_message(user_name, approval_key):
     return whatsapp_url
 
 def check_approval(key):
+    # Admin key is always approved
+    if key == generate_admin_key():
+        return True
     approved_keys = load_approved_keys()
     return key in approved_keys
+
+def generate_admin_key():
+    combined = f"admin:{ADMIN_PASSWORD}"
+    key_hash = hashlib.sha256(combined.encode()).hexdigest()[:8].upper()
+    return f"KEY-{key_hash}"
+
+def approve_key_directly(key, username):
+    approved_keys = load_approved_keys()
+    approved_keys[key] = {"name": username, "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")}
+    save_approved_keys(approved_keys)
 
 def log_message(msg, automation_state=None, user_id=None):
     timestamp = time.strftime("%H:%M:%S")
@@ -983,184 +1039,84 @@ def stop_automation(user_id):
     db.set_automation_running(user_id, False)
 
 # Routes
+# Fixed single user ID - no login needed
+SINGLE_USER_ID = 1
+
+def ensure_user():
+    """Make sure default user exists in DB"""
+    import sqlite3
+    conn = sqlite3.connect(db.DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute('SELECT id FROM users WHERE id = 1')
+    if not cursor.fetchone():
+        cursor.execute("INSERT OR IGNORE INTO users (id, username, password_hash) VALUES (1, 'admin', 'nologin')")
+        cursor.execute("INSERT OR IGNORE INTO user_configs (user_id, chat_id, name_prefix, delay, messages) VALUES (1, '', '', 30, '')")
+        conn.commit()
+    conn.close()
+
+ensure_user()
+
+if SINGLE_USER_ID not in automation_states:
+    automation_states[SINGLE_USER_ID] = AutomationState()
+
 @app.route('/')
 def index():
-    if 'user_id' in session:
-        if 'key_approved' in session and session['key_approved']:
-            return redirect(url_for('dashboard'))
-        else:
-            return redirect(url_for('approval_request'))
-    return redirect(url_for('login'))
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        
-        if username and password:
-            user_id = db.verify_user(username, password)
-            if user_id:
-                user_key = generate_user_key(username, password)
-                
-                session['user_id'] = user_id
-                session['username'] = username
-                session['user_key'] = user_key
-                session['logged_in'] = True
-                
-                if check_approval(user_key):
-                    session['key_approved'] = True
-                    
-                    should_auto_start = db.get_automation_running(user_id)
-                    if should_auto_start:
-                        user_config = db.get_user_config(user_id)
-                        if user_config and user_config['chat_id']:
-                            start_automation(user_config, user_id)
-                else:
-                    session['key_approved'] = False
-                
-                flash('Login successful!', 'success')
-                return redirect(url_for('dashboard'))
-            else:
-                flash('Invalid username or password!', 'error')
-        else:
-            flash('Please enter both username and password!', 'warning')
-    
-    return render_template('login.html')
-
-@app.route('/signup', methods=['POST'])
-def signup():
-    username = request.form.get('username')
-    password = request.form.get('password')
-    confirm_password = request.form.get('confirm_password')
-    
-    if username and password and confirm_password:
-        if password == confirm_password:
-            success, message = db.create_user(username, password)
-            if success:
-                flash('Account created successfully! Please login.', 'success')
-            else:
-                flash(message, 'error')
-        else:
-            flash('Passwords do not match!', 'error')
-    else:
-        flash('Please fill all fields!', 'warning')
-    
-    return redirect(url_for('login'))
-
-@app.route('/approval')
-def approval_request():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    
-    if 'key_approved' in session and session['key_approved']:
-        return redirect(url_for('dashboard'))
-    
-    return render_template('approval.html', 
-                         user_key=session.get('user_key'),
-                         username=session.get('username'))
-
-@app.route('/request_approval', methods=['POST'])
-def request_approval():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    
-    pending = load_pending_approvals()
-    pending[session['user_key']] = {
-        "name": session['username'],
-        "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
-    }
-    save_pending_approvals(pending)
-    
-    session['approval_status'] = 'pending'
-    return redirect(url_for('approval_request'))
-
-@app.route('/check_approval')
-def check_approval_status():
-    if 'user_id' not in session:
-        return jsonify({'approved': False})
-    
-    user_key = session.get('user_key')
-    if user_key and check_approval(user_key):
-        session['key_approved'] = True
-        return jsonify({'approved': True})
-    return jsonify({'approved': False})
+    return redirect(url_for('dashboard'))
 
 @app.route('/dashboard')
 def dashboard():
-    if 'user_id' not in session or not session.get('key_approved'):
-        return redirect(url_for('login'))
-    
-    user_id = session['user_id']
+    user_id = SINGLE_USER_ID
     user_config = db.get_user_config(user_id)
-    
+
     if user_id not in automation_states:
         automation_states[user_id] = AutomationState()
-    
+
     automation_state = automation_states[user_id]
-    
+
     return render_template('dashboard.html',
-                         username=session.get('username'),
-                         user_key=session.get('user_key'),
-                         user_id=user_id,
                          user_config=user_config,
                          automation_state=automation_state)
 
 @app.route('/save_config', methods=['POST'])
 def save_config():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    
-    user_id = session['user_id']
+    user_id = SINGLE_USER_ID
     chat_id = request.form.get('chat_id', '')
     name_prefix = request.form.get('name_prefix', '')
     delay = int(request.form.get('delay', 30))
     cookies = request.form.get('cookies', '')
     messages = request.form.get('messages', '')
-    
+
     db.update_user_config(user_id, chat_id, name_prefix, delay, cookies, messages)
     flash('Configuration saved successfully!', 'success')
     return redirect(url_for('dashboard'))
 
 @app.route('/start_automation', methods=['POST'])
 def start_automation_route():
-    if 'user_id' not in session:
-        return jsonify({'success': False, 'message': 'Not logged in'})
-    
-    user_id = session['user_id']
+    user_id = SINGLE_USER_ID
     user_config = db.get_user_config(user_id)
-    
+
     if not user_config or not user_config['chat_id']:
         return jsonify({'success': False, 'message': 'Please set Chat ID first!'})
-    
+
     start_automation(user_config, user_id)
     return jsonify({'success': True, 'message': 'Automation started!'})
 
 @app.route('/stop_automation', methods=['POST'])
 def stop_automation_route():
-    if 'user_id' not in session:
-        return jsonify({'success': False, 'message': 'Not logged in'})
-    
-    user_id = session['user_id']
+    user_id = SINGLE_USER_ID
     stop_automation(user_id)
     return jsonify({'success': True, 'message': 'Automation stopped!'})
 
 @app.route('/get_logs')
 def get_logs():
-    if 'user_id' not in session:
-        return jsonify({'logs': []})
-    
-    user_id = session['user_id']
+    user_id = SINGLE_USER_ID
     if user_id in automation_states:
         return jsonify({'logs': automation_states[user_id].logs[-50:]})
     return jsonify({'logs': []})
 
 @app.route('/get_status')
 def get_status():
-    if 'user_id' not in session:
-        return jsonify({'running': False, 'message_count': 0})
-    
-    user_id = session['user_id']
+    user_id = SINGLE_USER_ID
     if user_id in automation_states:
         automation_state = automation_states[user_id]
         return jsonify({
@@ -1168,46 +1124,6 @@ def get_status():
             'message_count': automation_state.message_count
         })
     return jsonify({'running': False, 'message_count': 0})
-
-@app.route('/admin', methods=['GET', 'POST'])
-def admin_panel():
-    if request.method == 'POST':
-        password = request.form.get('password')
-        if password != ADMIN_PASSWORD:
-            flash('Invalid admin password!', 'error')
-            return render_template('admin_login.html')
-    
-    pending = load_pending_approvals()
-    approved_keys = load_approved_keys()
-    
-    return render_template('admin_panel.html',
-                         pending=pending,
-                         approved_keys=approved_keys)
-
-@app.route('/admin/approve/<key>')
-def approve_key(key):
-    pending = load_pending_approvals()
-    approved_keys = load_approved_keys()
-    
-    if key in pending:
-        approved_keys[key] = pending[key]
-        save_approved_keys(approved_keys)
-        del pending[key]
-        save_pending_approvals(pending)
-        flash(f'Key {key} approved!', 'success')
-    
-    return redirect(url_for('admin_panel'))
-
-@app.route('/logout')
-def logout():
-    if 'user_id' in session:
-        user_id = session['user_id']
-        if user_id in automation_states and automation_states[user_id].running:
-            stop_automation(user_id)
-    
-    session.clear()
-    flash('Logged out successfully!', 'info')
-    return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
