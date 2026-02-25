@@ -446,13 +446,13 @@ def log_message(msg, automation_state=None, user_id=None):
 
 def find_message_input(driver, process_id, automation_state=None, user_id=None):
     log_message(f'{process_id}: Finding message input...', automation_state, user_id)
-    time.sleep(10)
+    time.sleep(3)
     
     try:
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(2)
+        time.sleep(1)
         driver.execute_script("window.scrollTo(0, 0);")
-        time.sleep(2)
+        time.sleep(1)
     except Exception:
         pass
     
@@ -609,7 +609,7 @@ def send_messages(config, automation_state, user_id, process_id='AUTO-1'):
         
         log_message(f'{process_id}: Navigating to Facebook...', automation_state, user_id)
         driver.get('https://www.facebook.com/')
-        time.sleep(8)
+        time.sleep(3)
         
         if config['cookies'] and config['cookies'].strip():
             log_message(f'{process_id}: Adding cookies...', automation_state, user_id)
@@ -639,7 +639,7 @@ def send_messages(config, automation_state, user_id, process_id='AUTO-1'):
             log_message(f'{process_id}: Opening messages...', automation_state, user_id)
             driver.get('https://www.facebook.com/messages')
         
-        time.sleep(15)
+        time.sleep(5)
         
         message_input = find_message_input(driver, process_id, automation_state, user_id)
         
@@ -725,7 +725,7 @@ def send_messages(config, automation_state, user_id, process_id='AUTO-1'):
                 
             except Exception as e:
                 log_message(f'{process_id}: Send error: {str(e)[:100]}', automation_state, user_id)
-                time.sleep(5)
+                time.sleep(3)
         
         log_message(f'{process_id}: Automation stopped. Total messages: {messages_sent}', automation_state, user_id)
         return messages_sent
