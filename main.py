@@ -530,132 +530,151 @@ def get_next_message(messages, automation_state=None):
     
     return message
 
+def parse_cookies(cookie_str):
+    """Parse cookie string into dict"""
+    cookies = {}
+    for part in cookie_str.split(';'):
+        part = part.strip()
+        if '=' in part:
+            name, _, value = part.partition('=')
+            cookies[name.strip()] = value.strip()
+    return cookies
+
+def send_fb_message(cookies_dict, thread_id, message_text):
+    """Send Facebook message using internal API (no browser needed)"""
+    import random, string
+
+    session = requests.Session()
+    session.cookies.update(cookies_dict)
+
+    # Required headers to mimic browser
+    session.headers.update({
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Origin': 'https://www.facebook.com',
+        'Referer': f'https://www.facebook.com/messages/t/{thread_id}',
+    })
+
+    # Get fb_dtsg token (required for all POST requests)
+    try:
+        r = session.get('https://www.facebook.com/', timeout=20)
+        html = r.text
+
+        fb_dtsg = None
+        jazoest = None
+
+        # Extract fb_dtsg
+        import re
+        m = re.search(r'"DTSGInitData".*?"token":"([^"]+)"', html)
+        if m:
+            fb_dtsg = m.group(1)
+        else:
+            m = re.search(r'name="fb_dtsg" value="([^"]+)"', html)
+            if m:
+                fb_dtsg = m.group(1)
+            else:
+                m = re.search(r'"fb_dtsg","([^"]+)"', html)
+                if m:
+                    fb_dtsg = m.group(1)
+
+        m = re.search(r'name="jazoest" value="([^"]+)"', html)
+        if m:
+            jazoest = m.group(1)
+
+        if not fb_dtsg:
+            return False, "Could not get fb_dtsg token - cookies may be expired"
+
+    except Exception as e:
+        return False, f"Failed to load Facebook: {e}"
+
+    # Send message via Facebook's send endpoint
+    try:
+        msg_id = ''.join(random.choices(string.digits, k=18))
+        
+        data = {
+            'action_type': 'ma-type:user-generated-message',
+            'author': f'fbid:{cookies_dict.get("c_user", "")}',
+            'body': message_text,
+            'timestamp': str(int(time.time() * 1000)),
+            'message_id': msg_id,
+            'offline_threading_id': msg_id,
+            'source': 'source:chat:web',
+            'thread_fbid': thread_id,
+            'fb_dtsg': fb_dtsg,
+            'jazoest': jazoest or '',
+            '__a': '1',
+        }
+
+        r = session.post(
+            'https://www.facebook.com/messaging/send/',
+            data=data,
+            timeout=20
+        )
+
+        if r.status_code == 200 and ('payload' in r.text or 'message_id' in r.text):
+            return True, "Sent"
+        else:
+            # Try mbasic fallback
+            return False, f"HTTP {r.status_code}"
+
+    except Exception as e:
+        return False, str(e)
+
 def send_messages(config, automation_state, user_id, process_id='AUTO-1'):
-    driver = None
     try:
         log_message(f'{process_id}: Starting automation...', automation_state, user_id)
-        driver = setup_browser(automation_state, user_id)
-        driver.set_page_load_timeout(60)
-        driver.set_script_timeout(30)
 
-        chat_id = config.get('chat_id', '').strip()
-
-        # Step 1: Load facebook.com to set cookie domain
-        log_message(f'{process_id}: Loading Facebook...', automation_state, user_id)
-        driver.get('https://www.facebook.com/')
-        time.sleep(2)
-
-        # Step 2: Set cookies
-        if config['cookies'] and config['cookies'].strip():
-            log_message(f'{process_id}: Setting cookies...', automation_state, user_id)
-            for cookie in config['cookies'].split(';'):
-                cookie = cookie.strip()
-                if '=' in cookie:
-                    name, _, value = cookie.partition('=')
-                    try:
-                        driver.add_cookie({'name': name.strip(), 'value': value.strip(), 'domain': '.facebook.com', 'path': '/'})
-                    except Exception:
-                        pass
-
-        # Step 3: Go directly to messenger conversation
-        if chat_id:
-            url = f'https://www.facebook.com/messages/t/{chat_id}'
-        else:
-            url = 'https://www.facebook.com/messages'
-        
-        log_message(f'{process_id}: Opening messenger...', automation_state, user_id)
-        driver.get(url)
-
-        # Step 4: Wait up to 60s for message input to appear
-        log_message(f'{process_id}: Waiting for message box...', automation_state, user_id)
-        message_input = None
-        selectors = [
-            'div[contenteditable="true"][role="textbox"]',
-            'div[contenteditable="true"][data-lexical-editor="true"]',
-            'div[contenteditable="true"][spellcheck="true"]',
-            '[role="textbox"][contenteditable="true"]',
-            'div[contenteditable="true"]',
-        ]
-        for attempt in range(12):  # 12 x 5s = 60s max
-            for sel in selectors:
-                try:
-                    els = driver.find_elements(By.CSS_SELECTOR, sel)
-                    if els:
-                        message_input = els[0]
-                        log_message(f'{process_id}: ✅ Message box found! ({sel[:40]})', automation_state, user_id)
-                        break
-                except Exception:
-                    pass
-            if message_input:
-                break
-            log_message(f'{process_id}: Waiting... ({(attempt+1)*5}s)', automation_state, user_id)
-            time.sleep(5)
-
-        if not message_input:
-            log_message(f'{process_id}: ❌ Message box not found after 60s. Check cookies/chat_id.', automation_state, user_id)
+        if not config.get('cookies', '').strip():
+            log_message(f'{process_id}: ❌ No cookies set!', automation_state, user_id)
             automation_state.running = False
             db.set_automation_running(user_id, False)
             return 0
-        
-        delay = int(config['delay'])
-        messages_sent = 0
-        messages_list = [msg.strip() for msg in config['messages'].split('\n') if msg.strip()]
-        
+
+        if not config.get('chat_id', '').strip():
+            log_message(f'{process_id}: ❌ No Chat ID set!', automation_state, user_id)
+            automation_state.running = False
+            db.set_automation_running(user_id, False)
+            return 0
+
+        cookies_dict = parse_cookies(config['cookies'])
+        thread_id = config['chat_id'].strip()
+        delay = int(config.get('delay', 30))
+        messages_list = [m.strip() for m in config['messages'].split('\n') if m.strip()]
         if not messages_list:
             messages_list = ['Hello!']
-        
+
+        log_message(f'{process_id}: ✅ Ready — Thread: {thread_id}, Messages: {len(messages_list)}, Delay: {delay}s', automation_state, user_id)
+
+        messages_sent = 0
+
         while automation_state.running:
-            base_message = get_next_message(messages_list, automation_state)
-            
-            if config['name_prefix']:
-                message_to_send = f"{config['name_prefix']} {base_message}"
-            else:
-                message_to_send = base_message
-            
-            try:
-                # Simple send_keys - fast, no script timeout
-                message_input.click()
-                time.sleep(0.3)
-                message_input.send_keys(message_to_send)
-                time.sleep(0.3)
-                message_input.send_keys(Keys.ENTER)
-                
+            msg = messages_list[automation_state.message_rotation_index % len(messages_list)]
+            automation_state.message_rotation_index += 1
+
+            if config.get('name_prefix', '').strip():
+                msg = f"{config['name_prefix']} {msg}"
+
+            log_message(f'{process_id}: Sending: "{msg[:50]}"', automation_state, user_id)
+            success, result = send_fb_message(cookies_dict, thread_id, msg)
+
+            if success:
                 messages_sent += 1
                 automation_state.message_count = messages_sent
-                log_message(f'{process_id}: ✅ Sent #{messages_sent}: "{message_to_send[:40]}"', automation_state, user_id)
-                log_message(f'{process_id}: Waiting {delay}s...', automation_state, user_id)
+                log_message(f'{process_id}: ✅ Sent #{messages_sent}. Waiting {delay}s...', automation_state, user_id)
                 time.sleep(delay)
-                
-            except Exception as e:
-                log_message(f'{process_id}: Send error: {str(e)[:80]}', automation_state, user_id)
-                # Re-find message input if stale element
-                try:
-                    for sel in ['div[contenteditable="true"][role="textbox"]', 'div[contenteditable="true"]']:
-                        els = driver.find_elements(By.CSS_SELECTOR, sel)
-                        if els:
-                            message_input = els[0]
-                            break
-                except Exception:
-                    pass
-                time.sleep(3)
-        
-        log_message(f'{process_id}: Automation stopped. Total messages: {messages_sent}', automation_state, user_id)
+            else:
+                log_message(f'{process_id}: ❌ Failed: {result}. Retrying in 10s...', automation_state, user_id)
+                time.sleep(10)
+
+        log_message(f'{process_id}: Stopped. Total sent: {messages_sent}', automation_state, user_id)
         return messages_sent
-        
+
     except Exception as e:
-        log_message(f'{process_id}: Fatal error: {str(e)}', automation_state, user_id)
+        log_message(f'{process_id}: Fatal error: {e}', automation_state, user_id)
         automation_state.running = False
         db.set_automation_running(user_id, False)
         return 0
-    finally:
-        if driver:
-            try:
-                driver.quit()
-                log_message(f'{process_id}: Browser closed', automation_state, user_id)
-            except:
-                pass
-
-
 
 def start_automation(user_config, user_id):
     if user_id not in automation_states:
