@@ -496,9 +496,18 @@ def setup_browser(automation_state=None, user_id=None):
     chrome_options.add_argument('--disable-extensions')
     chrome_options.add_argument('--disable-blink-features=AutomationControlled')
     chrome_options.add_argument('--ignore-certificate-errors')
-    chrome_options.add_experimental_option('excludeSwitches', ['enable-automation'])
+    chrome_options.add_argument('--disable-images')
+    chrome_options.add_argument('--blink-settings=imagesEnabled=false')
+    chrome_options.add_argument('--disable-notifications')
+    chrome_options.add_argument('--disable-popup-blocking')
+    chrome_options.add_argument('--disable-infobars')
+    chrome_options.add_argument('--disable-logging')
+    chrome_options.add_argument('--log-level=3')
+    chrome_options.add_argument('--silent')
+    chrome_options.add_argument('--disable-software-rasterizer')
+    chrome_options.add_argument('--window-size=1280,720')
+    chrome_options.add_experimental_option('excludeSwitches', ['enable-automation', 'enable-logging'])
     chrome_options.add_experimental_option('useAutomationExtension', False)
-    chrome_options.add_argument('--window-size=1920,1080')
     chrome_options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36')
     
     chromium_paths = [
@@ -562,9 +571,11 @@ def send_messages(config, automation_state, user_id, process_id='AUTO-1'):
         log_message(f'{process_id}: Starting automation...', automation_state, user_id)
         driver = setup_browser(automation_state, user_id)
         
+        driver.set_page_load_timeout(30)
+        driver.set_script_timeout(15)
         log_message(f'{process_id}: Navigating to Facebook...', automation_state, user_id)
         driver.get('https://www.facebook.com/')
-        time.sleep(3)
+        time.sleep(2)
         
         if config['cookies'] and config['cookies'].strip():
             log_message(f'{process_id}: Adding cookies...', automation_state, user_id)
@@ -629,66 +640,25 @@ def send_messages(config, automation_state, user_id, process_id='AUTO-1'):
                 message_to_send = base_message
             
             try:
-                driver.execute_script("""
-                    const element = arguments[0];
-                    const message = arguments[1];
-                    
-                    element.scrollIntoView({behavior: 'smooth', block: 'center'});
-                    element.focus();
-                    element.click();
-                    
-                    if (element.tagName === 'DIV') {
-                        element.textContent = message;
-                        element.innerHTML = message;
-                    } else {
-                        element.value = message;
-                    }
-                    
-                    element.dispatchEvent(new Event('input', { bubbles: true }));
-                    element.dispatchEvent(new Event('change', { bubbles: true }));
-                    element.dispatchEvent(new InputEvent('input', { bubbles: true, data: message }));
-                """, message_input, message_to_send)
-                
-                time.sleep(1)
-                
-                sent = driver.execute_script("""
-                    const sendButtons = document.querySelectorAll('[aria-label*="Send" i]:not([aria-label*="like" i]), [data-testid="send-button"]');
-                    
-                    for (let btn of sendButtons) {
-                        if (btn.offsetParent !== null) {
-                            btn.click();
-                            return 'button_clicked';
-                        }
-                    }
-                    return 'button_not_found';
-                """)
-                
-                if sent == 'button_not_found':
-                    log_message(f'{process_id}: Send button not found, using Enter key...', automation_state, user_id)
-                    driver.execute_script("""
-                        const element = arguments[0];
-                        element.focus();
-                        
-                        const events = [
-                            new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true }),
-                            new KeyboardEvent('keypress', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true }),
-                            new KeyboardEvent('keyup', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true })
-                        ];
-                        
-                        events.forEach(event => element.dispatchEvent(event));
-                    """, message_input)
-                    log_message(f'{process_id}: âœ… Sent via Enter: "{message_to_send[:30]}..."', automation_state, user_id)
-                else:
-                    log_message(f'{process_id}: âœ… Sent via button: "{message_to_send[:30]}..."', automation_state, user_id)
+                # Simple send_keys - fast, no script timeout
+                message_input.click()
+                time.sleep(0.3)
+                message_input.send_keys(message_to_send)
+                time.sleep(0.3)
+                message_input.send_keys(Keys.ENTER)
                 
                 messages_sent += 1
                 automation_state.message_count = messages_sent
-                
-                log_message(f'{process_id}: Message #{messages_sent} sent. Waiting {delay}s...', automation_state, user_id)
+                log_message(f'{process_id}: ✅ Sent #{messages_sent}: "{message_to_send[:40]}"', automation_state, user_id)
+                log_message(f'{process_id}: Waiting {delay}s...', automation_state, user_id)
                 time.sleep(delay)
                 
             except Exception as e:
-                log_message(f'{process_id}: Send error: {str(e)[:100]}', automation_state, user_id)
+                log_message(f'{process_id}: Send error: {str(e)[:80]}', automation_state, user_id)
+                try:
+                    message_input = find_message_input(driver, process_id, automation_state, user_id)
+                except:
+                    pass
                 time.sleep(3)
         
         log_message(f'{process_id}: Automation stopped. Total messages: {messages_sent}', automation_state, user_id)
