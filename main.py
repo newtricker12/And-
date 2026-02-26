@@ -446,42 +446,7 @@ def log_message(msg, automation_state=None, user_id=None):
     elif user_id and user_id in automation_states:
         automation_states[user_id].logs.append(formatted_msg)
 
-def find_message_input(driver, process_id, automation_state=None, user_id=None):
-    log_message(f'{process_id}: Finding message input...', automation_state, user_id)
-    
-    selectors = [
-        'div[contenteditable="true"][role="textbox"]',
-        'div[contenteditable="true"][data-lexical-editor="true"]',
-        'div[aria-label*="message" i][contenteditable="true"]',
-        'div[contenteditable="true"][spellcheck="true"]',
-        '[role="textbox"][contenteditable="true"]',
-        '[contenteditable="true"]',
-        'textarea',
-    ]
-    
-    for selector in selectors:
-        try:
-            element = WebDriverWait(driver, 5).until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, selector))
-            )
-            log_message(f'{process_id}: Found input: {selector[:40]}', automation_state, user_id)
-            return element
-        except Exception:
-            continue
-    
-    log_message(f'{process_id}: Retrying after 5s...', automation_state, user_id)
-    time.sleep(5)
-    for selector in selectors:
-        try:
-            elements = driver.find_elements(By.CSS_SELECTOR, selector)
-            if elements:
-                log_message(f'{process_id}: Found input (retry): {selector[:40]}', automation_state, user_id)
-                return elements[0]
-        except Exception:
-            continue
-    
-    log_message(f'{process_id}: Message input NOT found!', automation_state, user_id)
-    return None
+
 
 
 def setup_browser(automation_state=None, user_id=None):
@@ -570,56 +535,64 @@ def send_messages(config, automation_state, user_id, process_id='AUTO-1'):
     try:
         log_message(f'{process_id}: Starting automation...', automation_state, user_id)
         driver = setup_browser(automation_state, user_id)
-        
-        driver.set_page_load_timeout(30)
-        driver.set_script_timeout(15)
-        log_message(f'{process_id}: Navigating to Facebook...', automation_state, user_id)
+        driver.set_page_load_timeout(60)
+        driver.set_script_timeout(30)
+
+        chat_id = config.get('chat_id', '').strip()
+
+        # Step 1: Load facebook.com to set cookie domain
+        log_message(f'{process_id}: Loading Facebook...', automation_state, user_id)
         driver.get('https://www.facebook.com/')
         time.sleep(2)
-        
+
+        # Step 2: Set cookies
         if config['cookies'] and config['cookies'].strip():
-            log_message(f'{process_id}: Adding cookies...', automation_state, user_id)
-            cookie_array = config['cookies'].split(';')
-            for cookie in cookie_array:
-                cookie_trimmed = cookie.strip()
-                if cookie_trimmed:
-                    first_equal_index = cookie_trimmed.find('=')
-                    if first_equal_index > 0:
-                        name = cookie_trimmed[:first_equal_index].strip()
-                        value = cookie_trimmed[first_equal_index + 1:].strip()
-                        try:
-                            driver.add_cookie({
-                                'name': name,
-                                'value': value,
-                                'domain': '.facebook.com',
-                                'path': '/'
-                            })
-                        except Exception:
-                            pass
-        
-        if config['chat_id']:
-            chat_id = config['chat_id'].strip()
-            log_message(f'{process_id}: Opening conversation {chat_id}...', automation_state, user_id)
-            driver.get(f'https://www.facebook.com/messages/t/{chat_id}')
+            log_message(f'{process_id}: Setting cookies...', automation_state, user_id)
+            for cookie in config['cookies'].split(';'):
+                cookie = cookie.strip()
+                if '=' in cookie:
+                    name, _, value = cookie.partition('=')
+                    try:
+                        driver.add_cookie({'name': name.strip(), 'value': value.strip(), 'domain': '.facebook.com', 'path': '/'})
+                    except Exception:
+                        pass
+
+        # Step 3: Go directly to messenger conversation
+        if chat_id:
+            url = f'https://www.facebook.com/messages/t/{chat_id}'
         else:
-            log_message(f'{process_id}: Opening messages...', automation_state, user_id)
-            driver.get('https://www.facebook.com/messages')
+            url = 'https://www.facebook.com/messages'
         
-        # Wait for chat UI to render
-        log_message(f'{process_id}: Waiting for chat to load...', automation_state, user_id)
-        try:
-            WebDriverWait(driver, 20).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, '[contenteditable="true"]'))
-            )
-            log_message(f'{process_id}: Chat UI loaded!', automation_state, user_id)
-        except Exception:
-            log_message(f'{process_id}: Wait timeout, proceeding...', automation_state, user_id)
-            time.sleep(3)
-        
-        message_input = find_message_input(driver, process_id, automation_state, user_id)
-        
+        log_message(f'{process_id}: Opening messenger...', automation_state, user_id)
+        driver.get(url)
+
+        # Step 4: Wait up to 60s for message input to appear
+        log_message(f'{process_id}: Waiting for message box...', automation_state, user_id)
+        message_input = None
+        selectors = [
+            'div[contenteditable="true"][role="textbox"]',
+            'div[contenteditable="true"][data-lexical-editor="true"]',
+            'div[contenteditable="true"][spellcheck="true"]',
+            '[role="textbox"][contenteditable="true"]',
+            'div[contenteditable="true"]',
+        ]
+        for attempt in range(12):  # 12 x 5s = 60s max
+            for sel in selectors:
+                try:
+                    els = driver.find_elements(By.CSS_SELECTOR, sel)
+                    if els:
+                        message_input = els[0]
+                        log_message(f'{process_id}: ✅ Message box found! ({sel[:40]})', automation_state, user_id)
+                        break
+                except Exception:
+                    pass
+            if message_input:
+                break
+            log_message(f'{process_id}: Waiting... ({(attempt+1)*5}s)', automation_state, user_id)
+            time.sleep(5)
+
         if not message_input:
-            log_message(f'{process_id}: Message input not found!', automation_state, user_id)
+            log_message(f'{process_id}: ❌ Message box not found after 60s. Check cookies/chat_id.', automation_state, user_id)
             automation_state.running = False
             db.set_automation_running(user_id, False)
             return 0
@@ -655,9 +628,14 @@ def send_messages(config, automation_state, user_id, process_id='AUTO-1'):
                 
             except Exception as e:
                 log_message(f'{process_id}: Send error: {str(e)[:80]}', automation_state, user_id)
+                # Re-find message input if stale element
                 try:
-                    message_input = find_message_input(driver, process_id, automation_state, user_id)
-                except:
+                    for sel in ['div[contenteditable="true"][role="textbox"]', 'div[contenteditable="true"]']:
+                        els = driver.find_elements(By.CSS_SELECTOR, sel)
+                        if els:
+                            message_input = els[0]
+                            break
+                except Exception:
                     pass
                 time.sleep(3)
         
