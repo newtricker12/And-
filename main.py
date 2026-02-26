@@ -37,7 +37,7 @@ TEMPLATES['login.html'] = '''<!DOCTYPE html>
 </head>
 <body>
 <div class="container">
-    <div class="logo"><h1>âš¡ E2EE AUTO</h1><p>Facebook Messenger Automation</p></div>
+    <div class="logo"><h1>⚡ E2EE AUTO</h1><p>Facebook Messenger Automation</p></div>
     {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for category, message in messages %}<div class="alert alert-{{ category }}">{{ message }}</div>{% endfor %}{% endif %}{% endwith %}
     <div class="tabs">
         <button class="tab-btn active" onclick="showTab(\'login\', this)">Login</button>
@@ -92,18 +92,18 @@ TEMPLATES['approval.html'] = '''<!DOCTYPE html>
 </head>
 <body>
 <div class="container">
-    <h1>ðŸ”‘ Key Approval</h1>
+    <h1>🔑 Key Approval</h1>
     <p>Welcome <strong style="color:white;">{{ username }}</strong>! Admin approval required.</p>
-    <div class="status">â³ Waiting for admin approval...</div>
+    <div class="status">⏳ Waiting for admin approval...</div>
     <div class="key-box">
         <label>Your Unique Key</label>
         <div class="key">{{ user_key }}</div>
     </div>
-    <a href="https://api.whatsapp.com/send?phone=918290090930&text=Hello+Sir+Please+approve+my+key:+{{ user_key }}+Username:+{{ username }}" target="_blank" class="btn btn-wa">ðŸ“± Request via WhatsApp</a>
+    <a href="https://api.whatsapp.com/send?phone=918290090930&text=Hello+Sir+Please+approve+my+key:+{{ user_key }}+Username:+{{ username }}" target="_blank" class="btn btn-wa">📱 Request via WhatsApp</a>
     <form method="POST" action="/request_approval">
-        <button type="submit" class="btn btn-primary">ðŸ“¨ Submit Approval Request</button>
+        <button type="submit" class="btn btn-primary">📨 Submit Approval Request</button>
     </form>
-    <a href="/logout" class="btn-logout">â† Logout</a>
+    <a href="/logout" class="btn-logout">← Logout</a>
 </div>
 <script>
 setInterval(function(){
@@ -152,7 +152,7 @@ TEMPLATES['dashboard.html'] = '''<!DOCTYPE html>
 </head>
 <body>
 <div class="navbar">
-    <h1>âš¡ E2EE AUTO</h1>
+    <h1>⚡ E2EE AUTO</h1>
 </div>
 <div class="main">
     {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for category, message in messages %}<div class="alert alert-{{ category }}">{{ message }}</div>{% endfor %}{% endif %}{% endwith %}
@@ -161,7 +161,7 @@ TEMPLATES['dashboard.html'] = '''<!DOCTYPE html>
         <div class="stat-card">
             <div class="value">
                 <span id="statusBadge" class="badge {{ \'badge-running\' if automation_state.running else \'badge-stopped\' }}">
-                    {{ \'ðŸŸ¢ RUNNING\' if automation_state.running else \'ðŸ”´ STOPPED\' }}
+                    {{ \'🟢 RUNNING\' if automation_state.running else \'🔴 STOPPED\' }}
                 </span>
             </div>
             <div class="label">Status</div>
@@ -169,25 +169,25 @@ TEMPLATES['dashboard.html'] = '''<!DOCTYPE html>
         <div class="stat-card"><div class="value">{{ user_config.delay if user_config else 30 }}s</div><div class="label">Message Delay</div></div>
     </div>
     <div class="card">
-        <h2>ðŸŽ® AUTOMATION CONTROLS</h2>
+        <h2>🎮 AUTOMATION CONTROLS</h2>
         <div class="btn-row">
-            <button class="btn btn-success" onclick="startAuto()">â–¶ Start</button>
-            <button class="btn btn-danger" onclick="stopAuto()">â¹ Stop</button>
+            <button class="btn btn-success" onclick="startAuto()">▶ Start</button>
+            <button class="btn btn-danger" onclick="stopAuto()">⏹ Stop</button>
         </div>
     </div>
     <div class="card">
-        <h2>âš™ï¸ CONFIGURATION</h2>
+        <h2>⚙️ CONFIGURATION</h2>
         <form method="POST" action="/save_config">
             <div class="form-group"><label>Facebook Chat ID / Username</label><input type="text" name="chat_id" value="{{ user_config.chat_id if user_config else \'\' }}" placeholder="e.g. 100003995292301"></div>
             <div class="form-group"><label>Name Prefix (optional)</label><input type="text" name="name_prefix" value="{{ user_config.name_prefix if user_config else \'\' }}" placeholder="e.g. Hello"></div>
             <div class="form-group"><label>Delay (seconds)</label><input type="number" name="delay" value="{{ user_config.delay if user_config else 30 }}" min="5" max="3600"></div>
             <div class="form-group"><label>Facebook Cookies</label><textarea name="cookies" placeholder="Paste cookies here...">{{ user_config.cookies if user_config else \'\' }}</textarea></div>
             <div class="form-group"><label>Messages (one per line)</label><textarea name="messages" placeholder="Hello!&#10;How are you?">{{ user_config.messages if user_config else \'\' }}</textarea></div>
-            <button type="submit" class="btn btn-primary">ðŸ’¾ Save Configuration</button>
+            <button type="submit" class="btn btn-primary">💾 Save Configuration</button>
         </form>
     </div>
     <div class="card">
-        <h2>ðŸ“‹ LOGS</h2>
+        <h2>📋 LOGS</h2>
         <div class="log-box" id="logBox"><span style="color:#666;">Waiting for logs...</span></div>
     </div>
 </div>
@@ -199,7 +199,7 @@ function updateStatus(){
         document.getElementById("msgCount").textContent = d.message_count;
         var b = document.getElementById("statusBadge");
         b.className = "badge " + (d.running ? "badge-running" : "badge-stopped");
-        b.textContent = d.running ? "ðŸŸ¢ RUNNING" : "ðŸ”´ STOPPED";
+        b.textContent = d.running ? "🟢 RUNNING" : "🔴 STOPPED";
     });
 }
 function updateLogs(){
@@ -237,7 +237,7 @@ TEMPLATES['admin_login.html'] = '''<!DOCTYPE html>
 </head>
 <body>
 <div class="container">
-    <h1>ðŸ” Admin Panel</h1>
+    <h1>🔐 Admin Panel</h1>
     {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for category, message in messages %}<div class="alert">{{ message }}</div>{% endfor %}{% endif %}{% endwith %}
     <form method="POST" action="/admin">
         <div class="form-group"><label>Admin Password</label><input type="password" name="password" placeholder="Enter admin password" required></div>
@@ -278,11 +278,11 @@ TEMPLATES['admin_panel.html'] = '''<!DOCTYPE html>
     </style>
 </head>
 <body>
-<h1>ðŸ›¡ï¸ ADMIN PANEL</h1>
+<h1>🛡️ ADMIN PANEL</h1>
 {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for category, message in messages %}<div class="alert alert-{{ category }}">{{ message }}</div>{% endfor %}{% endif %}{% endwith %}
 
 <div class="card">
-    <h2>ðŸ‘¥ All Registered Users ({{ all_users|length }})</h2>
+    <h2>👥 All Registered Users ({{ all_users|length }})</h2>
     {% if all_users %}
     <table>
         <tr><th>#</th><th>Username</th><th>Registered</th><th>Status</th><th>Action</th></tr>
@@ -292,13 +292,13 @@ TEMPLATES['admin_panel.html'] = '''<!DOCTYPE html>
             <td>{{ user[0] }}</td>
             <td><strong>{{ user[1] }}</strong></td>
             <td>{{ user[2][:16] }}</td>
-            <td>{% if user_approved %}<span class="badge-ok">âœ… APPROVED</span>{% else %}<span class="badge-pending">â³ PENDING</span>{% endif %}</td>
+            <td>{% if user_approved %}<span class="badge-ok">✅ APPROVED</span>{% else %}<span class="badge-pending">⏳ PENDING</span>{% endif %}</td>
             <td>
-                {% for key, info in pending.items() %}{% if info.name == user[1] %}<a href="/admin/approve/{{ key }}" class="btn-approve">âœ… Approve</a>{% endif %}{% endfor %}
+                {% for key, info in pending.items() %}{% if info.name == user[1] %}<a href="/admin/approve/{{ key }}" class="btn-approve">✅ Approve</a>{% endif %}{% endfor %}
                 {% if not user_approved %}
                 <form method="POST" action="/admin/approve_by_username" style="display:inline">
                     <input type="hidden" name="username" value="{{ user[1] }}">
-                    <button type="submit" class="btn-direct">ðŸ”‘ Force Approve</button>
+                    <button type="submit" class="btn-direct">🔑 Force Approve</button>
                 </form>
                 {% endif %}
             </td>
@@ -309,42 +309,42 @@ TEMPLATES['admin_panel.html'] = '''<!DOCTYPE html>
 </div>
 
 <div class="card">
-    <h2>â³ Pending Approval Requests ({{ pending|length }})</h2>
+    <h2>⏳ Pending Approval Requests ({{ pending|length }})</h2>
     {% if pending %}
     <table>
         <tr><th>Key</th><th>Username</th><th>Requested At</th><th>Action</th></tr>
         {% for key, info in pending.items() %}
-        <tr><td class="key">{{ key }}</td><td>{{ info.name }}</td><td>{{ info.timestamp }}</td><td><a href="/admin/approve/{{ key }}" class="btn-approve">âœ… Approve</a></td></tr>
+        <tr><td class="key">{{ key }}</td><td>{{ info.name }}</td><td>{{ info.timestamp }}</td><td><a href="/admin/approve/{{ key }}" class="btn-approve">✅ Approve</a></td></tr>
         {% endfor %}
     </table>
     {% else %}<div class="empty">No pending requests</div>{% endif %}
 </div>
 
 <div class="card">
-    <h2>ðŸ”‘ Approve Key Directly</h2>
+    <h2>🔑 Approve Key Directly</h2>
     <p style="color:#aaa;font-size:13px;margin-bottom:10px;">Paste user key manually to approve</p>
     <div class="form-row">
         <form method="POST" action="/admin/approve_direct" style="display:flex;gap:10px;width:100%">
             <input type="text" name="key" placeholder="Paste KEY-XXXXXXXX here" required>
             <input type="text" name="username" placeholder="Username" required>
-            <button type="submit">âœ… Approve</button>
+            <button type="submit">✅ Approve</button>
         </form>
     </div>
 </div>
 
 <div class="card">
-    <h2>âœ… Approved Keys ({{ approved_keys|length }})</h2>
+    <h2>✅ Approved Keys ({{ approved_keys|length }})</h2>
     {% if approved_keys %}
     <table>
         <tr><th>Key</th><th>Username</th><th>Approved At</th></tr>
         {% for key, info in approved_keys.items() %}
-        <tr><td class="key">{{ key }}</td><td>{{ info.name }}</td><td>{{ info.get("timestamp","â€”") }}</td></tr>
+        <tr><td class="key">{{ key }}</td><td>{{ info.name }}</td><td>{{ info.get("timestamp","—") }}</td></tr>
         {% endfor %}
     </table>
     {% else %}<div class="empty">No approved keys yet</div>{% endif %}
 </div>
 
-<a href="/" class="back">â† Back to Home</a>
+<a href="/" class="back">← Back to Home</a>
 </body></html>'''
 import time
 import threading
@@ -358,6 +358,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import database as db
 import requests
 
@@ -413,7 +415,7 @@ def save_pending_approvals(pending):
         json.dump(pending, f, indent=2)
 
 def send_whatsapp_message(user_name, approval_key):
-    message = f"Ã°Å¸Â©Â· HELLO ABHI JAAT SIR PLEASE Ã¢ÂÂ¤Ã¯Â¸Â\nMy name is {user_name}\nPlease approve my key:\nÃ°Å¸â€â€˜ {approval_key}"
+    message = f"ðŸ©· HELLO ABHI JAAT SIR PLEASE â¤ï¸\nMy name is {user_name}\nPlease approve my key:\nðŸ”‘ {approval_key}"
     encoded_message = urllib.parse.quote(message)
     whatsapp_url = f"https://api.whatsapp.com/send?phone={WHATSAPP_NUMBER}&text={encoded_message}"
     return whatsapp_url
@@ -446,92 +448,41 @@ def log_message(msg, automation_state=None, user_id=None):
 
 def find_message_input(driver, process_id, automation_state=None, user_id=None):
     log_message(f'{process_id}: Finding message input...', automation_state, user_id)
-    time.sleep(3)
     
-    try:
-        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(1)
-        driver.execute_script("window.scrollTo(0, 0);")
-        time.sleep(1)
-    except Exception:
-        pass
-    
-    try:
-        page_title = driver.title
-        page_url = driver.current_url
-        log_message(f'{process_id}: Page Title: {page_title}', automation_state, user_id)
-        log_message(f'{process_id}: Page URL: {page_url}', automation_state, user_id)
-    except Exception as e:
-        log_message(f'{process_id}: Could not get page info: {e}', automation_state, user_id)
-    
-    message_input_selectors = [
+    selectors = [
         'div[contenteditable="true"][role="textbox"]',
         'div[contenteditable="true"][data-lexical-editor="true"]',
         'div[aria-label*="message" i][contenteditable="true"]',
-        'div[aria-label*="Message" i][contenteditable="true"]',
         'div[contenteditable="true"][spellcheck="true"]',
         '[role="textbox"][contenteditable="true"]',
-        'textarea[placeholder*="message" i]',
-        'div[aria-placeholder*="message" i]',
-        'div[data-placeholder*="message" i]',
         '[contenteditable="true"]',
         'textarea',
-        'input[type="text"]'
     ]
     
-    log_message(f'{process_id}: Trying {len(message_input_selectors)} selectors...', automation_state, user_id)
-    
-    for idx, selector in enumerate(message_input_selectors):
+    for selector in selectors:
         try:
-            elements = driver.find_elements(By.CSS_SELECTOR, selector)
-            log_message(f'{process_id}: Selector {idx+1}/{len(message_input_selectors)} "{selector[:50]}..." found {len(elements)} elements', automation_state, user_id)
-            
-            for element in elements:
-                try:
-                    is_editable = driver.execute_script("""
-                        return arguments[0].contentEditable === 'true' || 
-                               arguments[0].tagName === 'TEXTAREA' || 
-                               arguments[0].tagName === 'INPUT';
-                    """, element)
-                    
-                    if is_editable:
-                        log_message(f'{process_id}: Found editable element with selector #{idx+1}', automation_state, user_id)
-                        
-                        try:
-                            element.click()
-                            time.sleep(0.5)
-                        except:
-                            pass
-                        
-                        element_text = driver.execute_script("return arguments[0].placeholder || arguments[0].getAttribute('aria-label') || arguments[0].getAttribute('aria-placeholder') || '';", element).lower()
-                        
-                        keywords = ['message', 'write', 'type', 'send', 'chat', 'msg', 'reply', 'text', 'aa']
-                        if any(keyword in element_text for keyword in keywords):
-                            log_message(f'{process_id}: Ã¢Å“â€¦ Found message input with text: {element_text[:50]}', automation_state, user_id)
-                            return element
-                        elif idx < 10:
-                            log_message(f'{process_id}: Ã¢Å“â€¦ Using primary selector editable element (#{idx+1})', automation_state, user_id)
-                            return element
-                        elif selector == '[contenteditable="true"]' or selector == 'textarea' or selector == 'input[type="text"]':
-                            log_message(f'{process_id}: Ã¢Å“â€¦ Using fallback editable element', automation_state, user_id)
-                            return element
-                except Exception as e:
-                    log_message(f'{process_id}: Element check failed: {str(e)[:50]}', automation_state, user_id)
-                    continue
-        except Exception as e:
+            element = WebDriverWait(driver, 5).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, selector))
+            )
+            log_message(f'{process_id}: Found input: {selector[:40]}', automation_state, user_id)
+            return element
+        except Exception:
             continue
     
-    try:
-        page_source = driver.page_source
-        log_message(f'{process_id}: Page source length: {len(page_source)} characters', automation_state, user_id)
-        if 'contenteditable' in page_source.lower():
-            log_message(f'{process_id}: Page contains contenteditable elements', automation_state, user_id)
-        else:
-            log_message(f'{process_id}: No contenteditable elements found in page', automation_state, user_id)
-    except Exception:
-        pass
+    log_message(f'{process_id}: Retrying after 5s...', automation_state, user_id)
+    time.sleep(5)
+    for selector in selectors:
+        try:
+            elements = driver.find_elements(By.CSS_SELECTOR, selector)
+            if elements:
+                log_message(f'{process_id}: Found input (retry): {selector[:40]}', automation_state, user_id)
+                return elements[0]
+        except Exception:
+            continue
     
+    log_message(f'{process_id}: Message input NOT found!', automation_state, user_id)
     return None
+
 
 def setup_browser(automation_state=None, user_id=None):
     log_message('Setting up Chrome browser...', automation_state, user_id)
@@ -543,6 +494,10 @@ def setup_browser(automation_state=None, user_id=None):
     chrome_options.add_argument('--disable-dev-shm-usage')
     chrome_options.add_argument('--disable-gpu')
     chrome_options.add_argument('--disable-extensions')
+    chrome_options.add_argument('--disable-blink-features=AutomationControlled')
+    chrome_options.add_argument('--ignore-certificate-errors')
+    chrome_options.add_experimental_option('excludeSwitches', ['enable-automation'])
+    chrome_options.add_experimental_option('useAutomationExtension', False)
     chrome_options.add_argument('--window-size=1920,1080')
     chrome_options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36')
     
@@ -639,7 +594,16 @@ def send_messages(config, automation_state, user_id, process_id='AUTO-1'):
             log_message(f'{process_id}: Opening messages...', automation_state, user_id)
             driver.get('https://www.facebook.com/messages')
         
-        time.sleep(5)
+        # Wait for chat UI to render
+        log_message(f'{process_id}: Waiting for chat to load...', automation_state, user_id)
+        try:
+            WebDriverWait(driver, 20).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, '[contenteditable="true"]'))
+            )
+            log_message(f'{process_id}: Chat UI loaded!', automation_state, user_id)
+        except Exception:
+            log_message(f'{process_id}: Wait timeout, proceeding...', automation_state, user_id)
+            time.sleep(3)
         
         message_input = find_message_input(driver, process_id, automation_state, user_id)
         
@@ -713,9 +677,9 @@ def send_messages(config, automation_state, user_id, process_id='AUTO-1'):
                         
                         events.forEach(event => element.dispatchEvent(event));
                     """, message_input)
-                    log_message(f'{process_id}: Ã¢Å“â€¦ Sent via Enter: "{message_to_send[:30]}..."', automation_state, user_id)
+                    log_message(f'{process_id}: âœ… Sent via Enter: "{message_to_send[:30]}..."', automation_state, user_id)
                 else:
-                    log_message(f'{process_id}: Ã¢Å“â€¦ Sent via button: "{message_to_send[:30]}..."', automation_state, user_id)
+                    log_message(f'{process_id}: âœ… Sent via button: "{message_to_send[:30]}..."', automation_state, user_id)
                 
                 messages_sent += 1
                 automation_state.message_count = messages_sent
